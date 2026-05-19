@@ -1026,7 +1026,7 @@ function CreateStoryModal({ open, onClose }: { open: boolean; onClose: () => voi
     });
 
     try {
-      await axios.post('http://localhost:4000/api/v1/public/stories', formData, {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1'}/public/stories`, formData, {
         withCredentials: true,
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -1206,7 +1206,7 @@ function StoriesTab({
                   <Carousel swipeToSlide draggable className="h-full">
                     {story.images.map((imgUrl, idx) => (
                       <div key={idx} className="h-[240px] w-full">
-                        <img src={`http://localhost:4000${imgUrl}`} alt="Post img" className="w-full h-full object-contain pointer-events-none" />
+                        <img src={`${BACKEND_URL}${imgUrl}`} alt="Post img" className="w-full h-full object-contain pointer-events-none" />
                       </div>
                     ))}
                   </Carousel>
@@ -1845,7 +1845,7 @@ function RideDetailModal({
     setDeleteLoading(true);
     try {
       await axios.put(
-        `http://localhost:4000/api/v1/admin/submissions/rides/${ride.id}/images`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1'}/admin/submissions/rides/${ride.id}/images`,
         { imageUrls: updated },
         { withCredentials: true }
       );
@@ -1865,7 +1865,7 @@ function RideDetailModal({
       const formData = new FormData();
       uploadFiles.forEach(f => formData.append('images', f));
       const res = await axios.patch(
-        `http://localhost:4000/api/v1/admin/submissions/rides/${ride.id}/images`,
+        `${import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1'}/admin/submissions/rides/${ride.id}/images`,
         formData,
         { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } }
       );
@@ -2011,7 +2011,8 @@ function RideDetailModal({
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-const api = axios.create({ baseURL: 'http://localhost:4000/api/v1', withCredentials: true });
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
 
 export default function AdminCommunity() {
   const [activeTab, setActiveTab] = useState<TabId>("dashboard");

@@ -6,7 +6,7 @@ import { UserNavbar } from '@/components/layout/UserNavbar';
 import Footer from '@/components/layout/Footer';
 import { Waves, Sunrise, Moon, Tent, Mountain, Sun, Zap, Route, Circle, Star, Calendar, Bike, Ruler, MessageCircle, Clock, MapPin } from 'lucide-react';
 
-const api = axios.create({ baseURL: 'http://localhost:4000/api/v1', withCredentials: true });
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
 
 const CARD_COLORS = [
   'from-[#dbeef8] to-[#b8ddf0]', 'from-[#f5ede0] to-[#e8d5b0]',

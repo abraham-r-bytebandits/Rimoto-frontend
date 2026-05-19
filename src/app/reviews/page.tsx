@@ -9,7 +9,8 @@ import { Upload, message, Image, Carousel } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
-const api = axios.create({ baseURL: 'http://localhost:4000/api/v1', withCredentials: true });
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 
 
 
@@ -187,7 +188,7 @@ export default function ReviewsForumPage() {
                   {/* Card thumbnail */}
                   <div className={`h-[300px] overflow-hidden relative bg-gradient-to-br ${CARD_COLORS[i % CARD_COLORS.length]}`}>
                     {story.images && story.images.length > 0 ? (
-                      <img src={`http://localhost:4000${story.images[0]}`} alt="Story cover" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                      <img src={`${BACKEND_URL}${story.images[0]}`} alt="Story cover" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center font-display text-[52px]">
                         {EMOJIS[i % EMOJIS.length]}
@@ -409,7 +410,7 @@ export default function ReviewsForumPage() {
                         <Carousel swipeToSlide draggable className="h-full">
                           {post.images.map((imgUrl: string, idx: number) => (
                             <div key={idx} className="h-[300px] w-full">
-                              <img src={`http://localhost:4000${imgUrl}`} alt="Post image" className="w-full h-full object-cover pointer-events-none" />
+                              <img src={`${BACKEND_URL}${imgUrl}`} alt="Post image" className="w-full h-full object-cover pointer-events-none" />
                             </div>
                           ))}
                         </Carousel>

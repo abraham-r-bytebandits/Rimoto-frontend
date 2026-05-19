@@ -17,12 +17,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Vite app
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Create deployment archive
         run: tar -czf frontend.tar.gz dist
@@ -36,17 +39,30 @@ jobs:
           source: "frontend.tar.gz"
           target: "/home/ec2-user/rimoto/rimoto-frontend"
 
-      - name: Deploy frontend
+      - name: Deploy and reload Nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            set -e
+
             cd /home/ec2-user/rimoto/rimoto-frontend
 
-            mkdir -p current
+            # Extract new build
+            tar -xzf frontend.tar.gz
 
-            rm -rf current/*
+            # Swap: backup old, put new in place
+            rm -rf current_old
+            [ -d current ] && mv current current_old
+            mv dist current
 
-            tar -xzf frontend.tar.gz -C current
+            # Reload nginx to pick up any config changes (no downtime)
+            sudo systemctl reload nginx
+
+            # Cleanup
+            rm -f frontend.tar.gz
+            rm -rf current_old
+
+            echo "✅ Frontend deployed successfully"
