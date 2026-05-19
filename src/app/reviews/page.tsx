@@ -45,8 +45,8 @@ export default function ReviewsForumPage() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/public/stories?postType=STORY'),
-      api.get('/public/stories?postType=REVIEW')
+      api.get('/public/stories?postType=STORY&limit=1000'),
+      api.get('/public/stories?postType=REVIEW&limit=1000')
     ]).then(([storiesRes, reviewsRes]) => {
       setStories(storiesRes.data?.data || []);
       setReviews(reviewsRes.data?.data || []);
@@ -186,7 +186,7 @@ export default function ReviewsForumPage() {
                   {/* Card thumbnail */}
                   <div className={`h-[300px] overflow-hidden relative bg-gradient-to-br ${CARD_COLORS[i % CARD_COLORS.length]}`}>
                     {story.images && story.images.length > 0 ? (
-                      <img src={`${BACKEND_URL}${story.images[0]}`} alt="Story cover" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
+                      <img src={`${story.images[0]}`} alt="Story cover" className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center font-display text-[52px]">
                         {EMOJIS[i % EMOJIS.length]}
@@ -408,7 +408,7 @@ export default function ReviewsForumPage() {
                         <Carousel swipeToSlide draggable className="h-full">
                           {post.images.map((imgUrl: string, idx: number) => (
                             <div key={idx} className="h-[300px] w-full">
-                              <img src={`${BACKEND_URL}${imgUrl}`} alt="Post image" className="w-full h-full object-cover pointer-events-none" />
+                              <img src={`${imgUrl}`} alt="Post image" className="w-full h-full object-cover pointer-events-none" />
                             </div>
                           ))}
                         </Carousel>
