@@ -10,7 +10,7 @@ import './app/globals.css';
 
 // Protected Route Component for Admin
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <div className="flex min-h-screen bg-bg items-center justify-center font-display text-4xl">LOADING...</div>;
