@@ -10,7 +10,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 
 
 
