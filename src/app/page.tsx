@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { UserNavbar } from '@/components/layout/UserNavbar';
 import Footer from '@/components/layout/Footer';
-import { Waves, Sunrise, Moon, Tent, Mountain, Sun, Zap, Route, Circle, Star, Calendar, Bike, Ruler, MessageCircle, Clock, MapPin } from 'lucide-react';
+import { Waves, Sunrise, Moon, Tent, Mountain, Sun, Zap, Route, Circle, Star, Calendar, Bike, Ruler, MessageCircle, Clock } from 'lucide-react';
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
 
@@ -21,7 +21,7 @@ const skillColor = (s: string) => {
 };
 
 export default function CommunityPage() {
-  const [filter, setFilter] = useState('All Rides');
+  const [filter] = useState('All Rides');
   const [showRideModal, setShowRideModal] = useState(false);
   const [rides, setRides] = useState<any[]>([]);
   const [featured, setFeatured] = useState<any | null>(null);
@@ -35,7 +35,7 @@ export default function CommunityPage() {
     endLocation: '', dateScheduled: '', timeStart: '', skillLevel: 'BEGINNER',
     bikeRequirement: 'All Bikes', whatsappGroupUrl: '', distanceKm: '',
   });
-  const [images, setImages] = useState<File[]>([]);  // kept for type safety, unused in submission
+
 
   const skillMap: Record<string, string> = { 'All Rides': '', 'Beginner': 'BEGINNER', 'Night Rides': '', 'Hill Climbs': 'ADVANCED' };
 

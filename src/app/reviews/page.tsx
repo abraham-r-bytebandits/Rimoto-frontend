@@ -28,9 +28,7 @@ const CARD_COLORS = [
 const EMOJIS = ['🌊', '🌄', '🌙', '🏕️', '🏔️', '🌅', '⚡', '🛣️'];
 
 export default function ReviewsForumPage() {
-  const [activeSort, setActiveSort] = useState('Hot');
   const [activeNav, setActiveNav] = useState('All Reviews');
-  const [isJoined, setIsJoined] = useState(false);
   const [stories, setStories] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
 

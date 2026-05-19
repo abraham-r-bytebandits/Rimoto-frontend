@@ -166,27 +166,7 @@ const MOCK_METRICS: Metrics = {
   pendingStories: 3,
 };
 
-const mkRide = (i: number, status: RideStatus = "PENDING"): Ride => ({
-  id: `r${i}`,
-  title: `Mountain Loop #${i}`,
-  startLocation: "Chennai",
-  endLocation: "Yelagiri",
-  dateScheduled: "2026-06-15",
-  timeStart: "06:00",
-  distanceKm: 150 + i * 10,
-  skillLevel: (["BEGINNER", "INTERMEDIATE", "ADVANCED"] as SkillLevel[])[i % 3],
-  bikeRequirement: ["Any", "250cc+", "500cc+"][i % 3],
-  whatsappJoinsCount: i * 3,
-  organizer: {
-    firstName: "Ravi",
-    lastName: "Kumar",
-    clubAffiliation: i % 2 === 0 ? "Chennai Riders" : "",
-    contactNumber: "9876543210",
-  },
-  createdAt: "2026-05-10",
-  status,
-  featuredSlot: i === 1 ? "HERO_BANNER" : null,
-});
+
 
 const ACTIVITIES: Activity[] = [
   { id: 1, message: '"Mountain Loop #2" was approved', actionSeverity: "SUCCESS", createdAt: "2026-05-17" },
