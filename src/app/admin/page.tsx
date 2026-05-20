@@ -202,7 +202,7 @@ function DesktopSidebar({
         >
           {open ? (
             <>
-              <img src="public/logo.svg" className="max-w-38" alt="Rimoto Logo" />
+              <img src="/logo.svg" className="max-w-38" alt="Rimoto Logo" />
               <Button
                 variant="ghost"
                 size="icon"
