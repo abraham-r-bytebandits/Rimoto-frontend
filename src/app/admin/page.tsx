@@ -579,8 +579,8 @@ function RideDetailModal({
                   accept="image/jpeg, image/png, image/webp"
                   className="hidden"
                   onChange={e => {
-                    if (e.target.files) {
-                      setUploadFiles(prev => [...prev, ...Array.from(e.target.files)].slice(0, 10));
+                    if (e.target.files && e.target.files.length > 0) {
+                      setUploadFiles(prev => [...prev, ...Array.from(e.target.files as FileList)].slice(0, 10));
                       e.target.value = '';
                     }
                   }}

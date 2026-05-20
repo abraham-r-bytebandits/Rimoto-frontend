@@ -215,7 +215,7 @@ export function DashboardTab({
               <div className="flex-1 p-0 flex flex-col relative bg-gray-50">
                 {heroBanner ? (
                   <div className="relative w-full h-full overflow-hidden flex flex-col justify-end">
-                    {heroBanner.imageUrls?.length > 0 ? (
+                    {heroBanner.imageUrls && heroBanner.imageUrls.length > 0 ? (
                       <img
                         src={heroBanner.imageUrls[0].replace(/['"]/g, '')}
                         crossOrigin="anonymous"

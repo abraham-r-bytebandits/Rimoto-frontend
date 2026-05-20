@@ -83,7 +83,7 @@ export function FeaturedTab({
           <div className="relative bg-gray-950 lg:w-1/2 min-h-[300px] flex flex-col justify-end p-8 overflow-hidden">
             {assigned ? (
               <>
-                {assigned.imageUrls?.length > 0 ? (
+                {assigned.imageUrls && assigned.imageUrls.length > 0 ? (
                   <img
                     src={assigned.imageUrls[0].replace(/['"]/g, '')}
                     crossOrigin="anonymous"
