@@ -344,7 +344,7 @@ function MobileSidebar({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent side="left" className="w-[260px] p-0">
         <SheetHeader className="px-6 h-16 flex flex-row items-center justify-between border-b">
-          <img src="public/logo.svg" alt="Rimoto Logo" />
+          <img src="/logo.svg" alt="Rimoto Logo" />
         </SheetHeader>
         <ScrollArea className="h-[calc(100vh-64px)]">
           <div className="py-3">
@@ -557,7 +557,7 @@ function RideDetailModal({
               )}
             </div>
 
-            <div 
+            <div
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
@@ -586,7 +586,7 @@ function RideDetailModal({
                   }}
                 />
               </label>
-              
+
               {uploadFiles.length > 0 && (
                 <div className="w-full mt-4 pt-4 border-t border-gray-100 space-y-3">
                   <div className="flex gap-2 flex-wrap justify-center">
