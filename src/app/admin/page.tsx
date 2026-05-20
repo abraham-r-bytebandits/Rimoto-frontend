@@ -33,12 +33,14 @@ import {
   ShieldCheck,
   UserCircle,
   Loader2,
+  Package,
 } from "lucide-react";
 
-// shadcn/ui imports
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -176,7 +178,7 @@ const ACTIVITIES: Activity[] = [
 
 // ─── Nav Config ───────────────────────────────────────────────────────────────
 
-type TabId = "dashboard" | "rides" | "stories" | "published" | "featured" | "routes" | "users";
+type TabId = "dashboard" | "rides" | "stories" | "published" | "featured" | "routes" | "users" | "claims";
 
 interface NavItem {
   id: TabId;
@@ -194,6 +196,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: "featured", icon: Star, label: "Featured Slots", category: "Content" },
   { id: "routes", icon: Map, label: "Routes / Map", category: "Content" },
   { id: "users", icon: Users, label: "Users", category: "Community" },
+  { id: "claims", icon: Package, label: "Gear Claims", category: "Community" },
 ];
 
 const NAV_CATEGORIES = ["Overview", "Moderation", "Content", "Community"];
@@ -206,6 +209,7 @@ const TAB_TITLES: Record<TabId, string> = {
   featured: "Featured Slots",
   routes: "Routes / Map",
   users: "User Management",
+  claims: "Gear Claims",
 };
 
 // ─── Skill Badge ──────────────────────────────────────────────────────────────
@@ -275,6 +279,14 @@ function DesktopSidebar({
   setActive: (t: TabId) => void;
   metrics: Metrics;
 }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/admin/login');
+  };
+
   return (
     <TooltipProvider delayDuration={0}>
       <aside
@@ -399,6 +411,7 @@ function DesktopSidebar({
           )}
           {open ? (
             <Button
+              onClick={handleLogout}
               variant="outline"
               size="sm"
               className="w-full rounded-none border-black text-[10px] font-bold uppercase tracking-widest h-8 hover:bg-black hover:text-white"
@@ -409,7 +422,7 @@ function DesktopSidebar({
           ) : (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none hover:bg-black/10">
+                <Button onClick={handleLogout} variant="ghost" size="icon" className="h-8 w-8 rounded-none hover:bg-black/10">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
@@ -1186,7 +1199,7 @@ function StoriesTab({
                   <Carousel swipeToSlide draggable className="h-full">
                     {story.images.map((imgUrl, idx) => (
                       <div key={idx} className="h-[240px] w-full">
-                        <img src={`${BACKEND_URL}${imgUrl}`} alt="Post img" className="w-full h-full object-contain pointer-events-none" />
+                        <img src={`${imgUrl}`} alt="Post img" className="w-full h-full object-contain pointer-events-none" />
                       </div>
                     ))}
                   </Carousel>
@@ -1673,7 +1686,7 @@ function UsersTab({ users, onAction }: { users: AppUser[]; onAction?: (type: str
         <Table>
           <TableHeader>
             <TableRow className="border-b border-black hover:bg-transparent bg-black">
-              {["Name", "Email", "Role", "Status", "Strikes", "Club", "Joined", "Actions"].map((h) => (
+              {["Name", "Email", "Role", "Status", "Club", "Joined", "Actions"].map((h) => (
                 <TableHead key={h} className="text-[10px] font-bold uppercase tracking-widest text-white py-3 px-4 h-auto">{h}</TableHead>
               ))}
             </TableRow>
@@ -1697,7 +1710,7 @@ function UsersTab({ users, onAction }: { users: AppUser[]; onAction?: (type: str
                       <ShieldCheck className="h-2.5 w-2.5 mr-1" /> Admin
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="rounded-none border-black text-[9px] font-bold uppercase tracking-widest">
+                    <Badge className="rounded-none border-black text-[9px] font-bold uppercase tracking-widest">
                       User
                     </Badge>
                   )}
@@ -1708,17 +1721,10 @@ function UsersTab({ users, onAction }: { users: AppUser[]; onAction?: (type: str
                       <Ban className="h-2.5 w-2.5 mr-1" /> Banned
                     </Badge>
                   ) : (
-                    <Badge variant="outline" className="rounded-none bg-emerald-50 text-emerald-700 border-emerald-300 text-[9px] font-bold uppercase tracking-widest">
+                    <Badge className="rounded-none bg-emerald-50 text-emerald-700 border-emerald-300 text-[9px] font-bold uppercase tracking-widest">
                       <Check className="h-2.5 w-2.5 mr-1" /> Active
                     </Badge>
                   )}
-                </TableCell>
-                <TableCell className="py-3 px-4">
-                  <span className={cn("font-bold text-[13px]", u.strikeCount > 0 ? "text-amber-600" : "opacity-25")}>
-                    {u.strikeCount > 0 ? (
-                      <span className="flex items-center gap-1"><AlertTriangle className="h-3 w-3" />{u.strikeCount}</span>
-                    ) : "0"}
-                  </span>
                 </TableCell>
                 <TableCell className="py-3 px-4 text-[11px] opacity-50">{u.clubAffiliation || "—"}</TableCell>
                 <TableCell className="py-3 px-4 text-[11px] opacity-50 whitespace-nowrap">{new Date(u.joinedAt).toLocaleDateString()}</TableCell>
@@ -1738,9 +1744,9 @@ function UsersTab({ users, onAction }: { users: AppUser[]; onAction?: (type: str
                         {actionLoading === `ban-${u.id}` ? <Loader2 className="h-3 w-3 animate-spin" /> : u.isBanned ? <><Check className="h-3 w-3 mr-0.5" />Unban</> : <><Ban className="h-3 w-3 mr-0.5" />Ban</>}
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" className="rounded-none h-7 w-7 p-0 border-black hover:bg-black hover:text-white" disabled={u.role === "ADMIN"} title={u.role === "ADMIN" ? "Demote first" : `Delete ${u.firstName}`} onClick={() => setConfirmDel(u)}>
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <button className="rounded-none h-7 w-7 p-0 border border-gray-400 flex items-center justify-center group" disabled={u.role === "ADMIN"} title={u.role === "ADMIN" ? "Demote first" : `Delete ${u.firstName}`} onClick={() => setConfirmDel(u)}>
+                      <Trash2 size={14} color="black" />
+                    </button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -1991,7 +1997,7 @@ function RideDetailModal({
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
 
 export default function AdminCommunity() {
@@ -2015,6 +2021,7 @@ export default function AdminCommunity() {
 
   const [users, setUsers] = useState<AppUser[]>([]);
   const [popularRoutes, setPopularRoutes] = useState<any[]>([]);
+  const [claims, setClaims] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchAdminData = useCallback(async () => {
@@ -2042,7 +2049,7 @@ export default function AdminCommunity() {
       setApprovedRides(appRides.data?.data || []);
       setRejectedRides(rejRides.data?.data || []);
 
-      // Fetch Stories (if implemented on backend)
+      // Fetch Stories
       const [pendStories, appStories, rejStories] = await Promise.all([
         api.get('/admin/submissions/stories?status=PENDING').catch(() => ({ data: { data: [] } })),
         api.get('/admin/submissions/stories?status=APPROVED').catch(() => ({ data: { data: [] } })),
@@ -2059,6 +2066,10 @@ export default function AdminCommunity() {
       // Fetch Popular Routes
       const routesRes = await api.get('/public/popular-routes').catch(() => ({ data: { data: [] } }));
       setPopularRoutes(routesRes.data?.data || []);
+
+      // Fetch Claims
+      const claimsRes = await api.get('/admin/claims').catch(() => ({ data: { data: [] } }));
+      setClaims(claimsRes.data?.data || []);
     } catch (error) {
       console.error("Error fetching admin data:", error);
     } finally {
@@ -2207,6 +2218,7 @@ export default function AdminCommunity() {
           {activeTab === "featured" && <FeaturedTab approvedRides={approvedRides} onSave={handleFeaturedSave} />}
           {activeTab === "routes" && <RoutesTab popularRoutes={popularRoutes} onAction={handlePopularRouteAction} />}
           {activeTab === "users" && <UsersTab users={users} onAction={handleUserAction} />}
+          {activeTab === "claims" && <ClaimsTab claims={claims} />}
         </main>
       </div>
 
@@ -2215,6 +2227,245 @@ export default function AdminCommunity() {
         onClose={() => setSelectedRide(null)}
         onAction={handleRideAction}
       />
+    </div>
+  );
+}
+
+function ClaimsTab({ claims }: { claims: any[] }) {
+  const [selectedClaim, setSelectedClaim] = useState<any | null>(null);
+
+  if (claims.length === 0) return <div className="p-8 text-center text-gray-500 font-display">NO CLAIMS YET</div>;
+
+  if (selectedClaim) {
+    return (
+      <div className="space-y-6 animate-in fade-in bg-white border-2 border-black shadow-[8px_8px_0_var(--color-accent)] p-8">
+        <div className="flex items-center justify-between border-b-2 border-black pb-6 mb-8">
+          <Button variant="outline" size="sm" onClick={() => setSelectedClaim(null)} className="font-bold tracking-widest uppercase hover:bg-black hover:text-white transition-colors">
+            <ChevronLeft size={16} className="mr-2" /> Back to Claims
+          </Button>
+          <div className="text-right">
+            <h2 className="font-display text-3xl uppercase tracking-widest text-black mb-1">
+              Order #{selectedClaim.orderNumber}
+            </h2>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest">Claim Details</p>
+          </div>
+        </div>
+
+        {/* Customer & Claim Meta */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8 pb-8 border-b border-gray-200">
+          <div className="space-y-6">
+            <div className="flex gap-4">
+              <div>
+                <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-2">Claim Type</span>
+                <Badge variant={selectedClaim.claimType === 'WARRANTY' ? 'danger' : selectedClaim.claimType === 'RETURN' ? 'neutral' : 'info'} className="uppercase px-4 py-1.5">
+                  {selectedClaim.claimType}
+                </Badge>
+              </div>
+              <div>
+                <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-2">Status</span>
+                <Badge className="uppercase px-4 py-1.5 bg-black text-black">
+                  {selectedClaim.status || "PENDING"}
+                </Badge>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+              <div><span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Date Submitted</span><span className="font-medium">{new Date(selectedClaim.createdAt).toLocaleDateString()}</span></div>
+              <div><span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Purchase Date</span><span className="font-medium">{selectedClaim.purchaseDate ? new Date(selectedClaim.purchaseDate).toLocaleDateString() : 'N/A'}</span></div>
+              <div className="col-span-2"><span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Customer Name</span><span className="font-medium">{selectedClaim.customerName}</span></div>
+              <div><span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Email Address</span><span className="font-medium">{selectedClaim.email}</span></div>
+              <div><span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">WhatsApp Phone</span><span className="font-medium">{selectedClaim.phone}</span></div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {/* Addresses */}
+            {(selectedClaim.billingAddress || selectedClaim.shippingAddress) && (
+              <div className="bg-gray-50 p-6 border border-gray-200 space-y-6 h-full">
+                {selectedClaim.billingAddress && (
+                  <div>
+                    <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-2">Billing Address</span>
+                    <p className="text-[13px] leading-relaxed whitespace-pre-wrap font-medium">{selectedClaim.billingAddress}</p>
+                  </div>
+                )}
+                {selectedClaim.shippingAddress && (
+                  <div>
+                    <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-2">Shipping Address</span>
+                    <p className="text-[13px] leading-relaxed whitespace-pre-wrap font-medium">{selectedClaim.shippingAddress}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Product Information */}
+        <div className="pb-8 border-b border-gray-200">
+          <span className="font-display uppercase tracking-widest text-black text-[18px] block mb-6">Product Details</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Main Product (Warranty/Return) OR Returning Product (Exchange) */}
+            <div className="bg-white border-2 border-black p-6 relative">
+              <span className="absolute -top-3 left-4 bg-black text-white text-[10px] uppercase tracking-widest px-3 py-1 font-bold">
+                {selectedClaim.claimType === 'EXCHANGE' ? 'Returning Product' : 'Product Info'}
+              </span>
+              <div className="mt-2">
+                <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Product Name</span>
+                <span className="font-semibold text-[16px] block mb-4">
+                  {selectedClaim.claimType === 'EXCHANGE' ? selectedClaim.returningProductName : selectedClaim.productName}
+                </span>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Color</span>
+                    <span className="font-medium text-[14px]">
+                      {selectedClaim.claimType === 'EXCHANGE' ? selectedClaim.returningProductColor : selectedClaim.productColor}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-bold uppercase tracking-widest text-gray-500 text-[10px] block mb-1">Size</span>
+                    <span className="font-medium text-[14px]">
+                      {selectedClaim.claimType === 'EXCHANGE' ? selectedClaim.returningProductSize : selectedClaim.productSize}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Exchange Product (Only for Exchange) */}
+            {selectedClaim.claimType === 'EXCHANGE' && (
+              <div className="bg-[#E8FF47]/20 border-2 border-black p-6 relative">
+                <span className="absolute -top-3 left-4 bg-black text-[#E8FF47] text-[10px] uppercase tracking-widest px-3 py-1 font-bold">
+                  Exchange For
+                </span>
+                <div className="mt-2">
+                  <span className="font-bold uppercase tracking-widest text-gray-600 text-[10px] block mb-1">Product Name</span>
+                  <span className="font-semibold text-[16px] block mb-4">
+                    {selectedClaim.exchangeProductName}
+                  </span>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="font-bold uppercase tracking-widest text-gray-600 text-[10px] block mb-1">Color</span>
+                      <span className="font-medium text-[14px]">{selectedClaim.exchangeProductColor}</span>
+                    </div>
+                    <div>
+                      <span className="font-bold uppercase tracking-widest text-gray-600 text-[10px] block mb-1">Size</span>
+                      <span className="font-medium text-[14px]">{selectedClaim.exchangeProductSize}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+
+        {/* Reason */}
+        <div className="pb-8 border-b border-gray-200">
+          <span className="font-display uppercase tracking-widest text-black text-[18px] block mb-6">Reason / Description</span>
+          <p className="whitespace-pre-wrap leading-relaxed text-[15px] bg-gray-50 p-6 border border-gray-200 font-sans">{selectedClaim.reason}</p>
+        </div>
+
+        {/* Media */}
+        <div>
+          <span className="font-display uppercase tracking-widest text-black text-[18px] block mb-6">Attached Media</span>
+
+          <div className="flex flex-col md:flex-row gap-12">
+            {/* Invoice */}
+            <div className="shrink-0">
+              <span className="text-[10px] font-bold uppercase text-gray-500 tracking-widest block mb-4">Invoice Document</span>
+              {selectedClaim.invoiceUrl ? (
+                <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'}${selectedClaim.invoiceUrl}`} target="_blank" rel="noreferrer" className="inline-flex flex-col items-center justify-center border-2 border-black bg-black text-white p-6 hover:bg-white hover:text-black transition-colors w-48 h-48 group">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-4 group-hover:scale-110 transition-transform"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                  <span className="text-[11px] font-bold tracking-widest uppercase text-center">VIEW INVOICE<br />PDF/IMAGE</span>
+                </a>
+              ) : (
+                <div className="w-48 h-48 border-2 border-dashed border-gray-300 flex items-center justify-center text-[10px] text-gray-400 uppercase tracking-widest text-center p-4">No Invoice<br />Attached</div>
+              )}
+            </div>
+
+            {/* Product Media */}
+            <div className="flex-1">
+              <span className="text-[10px] font-bold uppercase text-gray-500 tracking-widest block mb-4">Product Images/Videos</span>
+              {selectedClaim.productMediaUrls && selectedClaim.productMediaUrls.length > 0 ? (
+                <div className="flex flex-wrap gap-4">
+                  {selectedClaim.productMediaUrls.map((url: string, idx: number) => {
+                    const isVideo = url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.mov') || url.toLowerCase().endsWith('.avi');
+                    const fullUrl = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'}${url}`;
+                    return isVideo ? (
+                      <a key={idx} href={fullUrl} target="_blank" rel="noreferrer" className="flex flex-col shrink-0 border-2 border-black p-4 hover:bg-black hover:text-white transition-colors items-center justify-center gap-2 h-48 w-48 bg-gray-50 group">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mb-2 group-hover:scale-110 transition-transform"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <span className="text-[11px] font-bold uppercase tracking-widest">PLAY VIDEO</span>
+                      </a>
+                    ) : (
+                      <a key={idx} href={fullUrl} target="_blank" rel="noreferrer" className="shrink-0 relative group block h-48 w-48 border-2 border-black overflow-hidden bg-gray-100">
+                        <img src={fullUrl} alt="media" className="object-cover h-full w-full group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <span className="opacity-0 group-hover:opacity-100 bg-white text-black text-[10px] font-bold px-3 py-1 uppercase tracking-widest transition-opacity shadow-lg">View</span>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="h-48 border-2 border-dashed border-gray-300 flex items-center justify-center text-[10px] text-gray-400 uppercase tracking-widest w-full">
+                  No product media attached
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-in fade-in">
+      <div className="flex justify-between items-end mb-6">
+        <div>
+          <h2 className="font-display text-3xl uppercase tracking-widest text-black mb-1">Gear Claims</h2>
+          <p className="text-sm font-sans text-gray-500">Manage warranty, returns, and exchanges.</p>
+        </div>
+      </div>
+
+      <div className="bg-white border-2 border-black shadow-[8px_8px_0_var(--color-accent)] overflow-hidden">
+        <Table>
+          <TableHeader className="bg-black">
+            <TableRow className="hover:bg-black">
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4">Order #</TableHead>
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4">Date</TableHead>
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4">Customer</TableHead>
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4">Type</TableHead>
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4">Status</TableHead>
+              <TableHead className="text-white font-display tracking-widest text-[11px] py-4 text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {claims.map((claim) => (
+              <TableRow key={claim.id} className="border-b border-gray-200">
+                <TableCell className="font-bold text-[13px]">{claim.orderNumber}</TableCell>
+                <TableCell className="text-[12px] opacity-70">{new Date(claim.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell className="text-[12px] opacity-70">{claim.customerName}</TableCell>
+                <TableCell>
+                  <Badge variant={claim.claimType === 'WARRANTY' ? 'danger' : claim.claimType === 'RETURN' ? 'neutral' : 'info'} className="uppercase">
+                    {claim.claimType}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge className="uppercase opacity-60">
+                    {claim.status || "PENDING"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="action-vw" size="sm" onClick={() => setSelectedClaim(claim)}>
+                    <Eye size={14} className="mr-2" /> View Full Data
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }

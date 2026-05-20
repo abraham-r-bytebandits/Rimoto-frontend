@@ -90,17 +90,6 @@ export default function ReviewsForumPage() {
     }
   ];
 
-  const getFlairVariant = (type: string) => {
-    switch (type) {
-      case 'adv': return 'advanced';
-      case 'int': return 'info';
-      case 'rev': return 'accent';
-      case 'tip': return 'outline';
-      case 'gear': return 'neutral';
-      default: return 'outline';
-    }
-  };
-
   const isStoriesView = activeNav === 'All Stories';
 
   return (
@@ -379,12 +368,12 @@ export default function ReviewsForumPage() {
                   <div className="flex-1 p-3.5 px-4 pb-3 min-w-0 flex flex-col w-full max-w-[800px]">
                     <div className="flex items-center gap-2 flex-wrap mb-2">
                       {post.isPinned && <span className="bg-accent text-black text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 inline-block">PINNED</span>}
-                      <Badge variant={getFlairVariant(post.flairType)} size="xs" className="border-transparent">
+                      <Badge size="xs" className="border-transparent">
                         {post.flairType.replace(/_/g, ' ')}
                       </Badge>
                       <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-400">Posted by <strong className="text-black">{post.author?.firstName} {post.author?.lastName}</strong></div>
-                      <span className="text-border-d text-[10px]">•</span>
-                      <div className="text-[10px] text-gray-300 font-medium">{new Date(post.createdAt).toLocaleDateString()}</div>
+                      <span className="text-gray-500 text-[10px]">•</span>
+                      <div className="text-[10px] text-gray-500 font-medium">{new Date(post.createdAt).toLocaleDateString()}</div>
                     </div>
 
                     <h3 className="font-display text-[20px] tracking-[0.03em] uppercase text-black leading-[1.1] mb-2 transition-colors group-hover:text-black/80">{post.title}</h3>
@@ -436,7 +425,7 @@ export default function ReviewsForumPage() {
                 </div>
                 <div className="p-4">
                   <p className="text-[12px] text-gray-400 leading-[1.75] mb-3.5">The official forum for Rimoto riders in Chennai. Share route conditions, post detailed ride reviews, trade gear advice, and connect with fellow enthusiasts.</p>
-                  <Button className="w-full">CREATE POST</Button>
+                  <Button className="w-full" onClick={() => setIsCreatingPost(true)}>CREATE POST</Button>
                 </div>
               </div>
 

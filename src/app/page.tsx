@@ -187,7 +187,7 @@ export default function CommunityPage() {
             <a href="/reviews" className="text-[11px] font-bold uppercase tracking-[0.15em] text-black no-underline border-b-2 border-black pb-0.5 transition-colors hover:border-accent whitespace-nowrap">All Stories →</a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[2px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {stories.length === 0 && <div className="col-span-4 py-16 text-center text-[12px] font-bold uppercase tracking-[0.15em] opacity-30">Loading stories...</div>}
             {stories.map((story, i) => (
               <div key={story.id} className="bg-white border text-left border-border overflow-hidden transition-all duration-200 cursor-pointer hover:border-black hover:shadow-[4px_4px_0_var(--color-accent)] flex flex-col">
@@ -210,7 +210,6 @@ export default function CommunityPage() {
                 </div>
               </div>
             ))}
-
           </div>
         </div>
 

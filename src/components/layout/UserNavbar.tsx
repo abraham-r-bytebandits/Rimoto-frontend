@@ -39,6 +39,9 @@ export function UserNavbar({ activePath = '/community', showSearch = false, ctaT
             <li>
               <a href="/reviews" className={`font-sans text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors whitespace-nowrap ${activePath === '/reviews' ? 'text-black border-b-2 border-accent pb-0.5' : 'text-black hover:text-black'}`}>Forum</a>
             </li>
+            <li>
+              <a href="/refund" className={`font-sans text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors whitespace-nowrap ${activePath === '/refund' ? 'text-black border-b-2 border-accent pb-0.5' : 'text-black hover:text-black'}`}>Claims</a>
+            </li>
           </ul>
 
           <div className="hidden md:flex items-center gap-4 shrink-0">
@@ -73,6 +76,7 @@ export function UserNavbar({ activePath = '/community', showSearch = false, ctaT
           <a href="https://rimotogear.com" target="_blank" className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted decoration-none py-3 border-b border-border hover:text-black">Shop Gear ↗</a>
           <a href="/" className={`text-[11px] font-semibold uppercase tracking-[0.15em] decoration-none py-3 border-b border-border hover:text-black ${activePath === '/' ? 'text-black' : ''}`}>Ride Board</a>
           <a href="/reviews" className={`text-[11px] font-semibold uppercase tracking-[0.15em] decoration-none py-3 border-b border-border hover:text-black ${activePath === '/reviews' ? 'text-black' : ''}`}>Forum</a>
+          <a href="/refund" className={`text-[11px] font-semibold uppercase tracking-[0.15em] decoration-none py-3 border-b border-border hover:text-black ${activePath === '/refund' ? 'text-black' : ''}`}>Claims</a>
           <button onClick={() => { setMobileMenuOpen(false); onCtaClick?.(); }} className="mt-3 bg-black text-white text-center p-3 font-bold cursor-pointer border-none font-sans text-[11px] tracking-[0.15em] uppercase hover:bg-accent hover:text-black transition-colors">
             {ctaText}
           </button>

@@ -6,6 +6,7 @@ import AdminCommunity from './app/admin/page';
 import AdminLogin from './app/admin/login';
 import ReviewsPage from './app/reviews/page';
 import UserLogin from './app/login/page';
+import RefundPage from './app/refund/page';
 import './app/globals.css';
 
 // Protected Route Component for Admin
@@ -31,6 +32,7 @@ function AppRoutes() {
       <Route path="/discover" element={<CommunityPage />} />
       <Route path="/reviews" element={<ReviewsPage />} />
       <Route path="/login" element={<UserLogin />} />
+      <Route path="/refund" element={<RefundPage />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route
         path="/admin"
