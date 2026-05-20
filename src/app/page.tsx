@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { UserNavbar } from '@/components/layout/UserNavbar';
 import Footer from '@/components/layout/Footer';
-import { Waves, Sunrise, Moon, Tent, Mountain, Sun, Zap, Route, Circle, Star, Calendar, Bike, Ruler, MessageCircle, Clock } from 'lucide-react';
+import { Waves, Sunrise, Moon, Tent, Mountain, Sun, Zap, Route, Circle, Star, Calendar, Bike, Ruler, MessageCircle, Clock, ImagePlus, X } from 'lucide-react';
 
 const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1', withCredentials: true });
 
@@ -35,7 +35,8 @@ export default function CommunityPage() {
     endLocation: '', dateScheduled: '', timeStart: '', skillLevel: 'BEGINNER',
     bikeRequirement: 'All Bikes', whatsappGroupUrl: '', distanceKm: '',
   });
-
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
 
   const skillMap: Record<string, string> = { 'All Rides': '', 'Beginner': 'BEGINNER', 'Night Rides': '', 'Hill Climbs': 'ADVANCED' };
 
@@ -68,7 +69,18 @@ export default function CommunityPage() {
   };
 
   const openModal = () => { setShowRideModal(true); document.body.style.overflow = 'hidden'; };
-  const closeModal = () => { setShowRideModal(false); document.body.style.overflow = ''; setSubmitMsg(''); };
+  const closeModal = () => { setShowRideModal(false); document.body.style.overflow = ''; setSubmitMsg(''); setUploadFiles([]); setIsDragging(false); };
+
+  const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const newFiles = Array.from(e.dataTransfer.files);
+      setUploadFiles(prev => [...prev, ...newFiles].slice(0, 10));
+    }
+  };
 
   const handleSubmitRide = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +96,8 @@ export default function CommunityPage() {
       formData.append('skillLevel', form.skillLevel);
       formData.append('bikeRequirement', form.bikeRequirement);
       formData.append('whatsappGroupUrl', form.whatsappGroupUrl);
+
+      uploadFiles.forEach(f => formData.append('images', f));
 
       await api.post('/public/rides', formData);
       setSubmitMsg('✓ Submitted! Admin will review within 24 hours.');
@@ -367,6 +381,47 @@ export default function CommunityPage() {
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-[7px] block">Distance (km)</label>
                   <input type="number" placeholder="e.g. 120" value={form.distanceKm} onChange={e => setForm(f => ({ ...f, distanceKm: e.target.value }))} className="w-full bg-white border border-border-d text-black font-sans text-[13px] px-3.5 py-[11px] outline-none transition-colors focus:border-black placeholder:text-gray-600" />
                 </div>
+              </div>
+
+              {/* Ride Images */}
+              <div className="mb-[18px]">
+                <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-[7px] block">Ride Images</label>
+                <div 
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`w-full border border-dashed text-black font-sans text-[13px] px-3.5 py-6 outline-none transition-colors focus-within:border-black flex flex-col items-center justify-center cursor-pointer relative ${isDragging ? 'border-[#D4E048] bg-[#D4E048]/10' : 'bg-white border-border-d hover:bg-gray-50'}`}
+                >
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg, image/png, image/webp"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    onChange={e => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        const newFiles = Array.from(e.target.files);
+                        setUploadFiles(prev => [...prev, ...newFiles].slice(0, 10));
+                        e.target.value = '';
+                      }
+                    }}
+                  />
+                  <ImagePlus size={24} className="text-gray-400 mb-2" />
+                  <span className="text-[11px] font-semibold text-gray-600">Click or drag images to upload</span>
+                  <span className="text-[10px] text-gray-400 mt-1">Up to 10 images (JPEG, PNG)</span>
+                </div>
+                
+                {uploadFiles.length > 0 && (
+                  <div className="flex gap-2 mt-3 flex-wrap">
+                    {uploadFiles.map((f, i) => (
+                      <div key={i} className="relative w-14 h-14 rounded-sm border border-border-d overflow-hidden shrink-0">
+                        <img src={URL.createObjectURL(f)} alt={`preview ${i}`} className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => setUploadFiles(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-0 right-0 bg-red-500 hover:bg-red-600 transition-colors text-white w-5 h-5 flex items-center justify-center text-[10px]">
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Submit */}

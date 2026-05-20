@@ -45,7 +45,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-bg flex flex-col font-sans">
       <UserNavbar />
-      
+
       <main className="flex-1 flex items-center justify-center py-16 px-6">
         <div className="w-full max-w-md bg-white border-2 border-black p-8 shadow-[8px_8px_0_0_#E8FF47]">
           <h1 className="font-display text-4xl font-bold uppercase mb-2">
@@ -115,7 +115,7 @@ export default function LoginPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full mt-4 text-sm font-bold uppercase tracking-widest py-3 border-2 border-black bg-black text-white hover:bg-[#E8FF47] hover:text-black transition-colors">
+            <Button type="submit" disabled={loading} className="w-full mt-4 text-sm font-bold uppercase tracking-widest py-3 border-2 border-black bg-black text-black hover:bg-[#E8FF47] hover:text-black transition-colors">
               {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
